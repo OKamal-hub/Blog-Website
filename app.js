@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
+const _ = require("lodash");
 
 const app = express();
 
@@ -15,8 +16,7 @@ const contactContent = "Scelerisque eleifend donec pretium vulputate sapien. Rho
 let posts = [];
 
 app.get("/", function(req, res){
-   res.render("home", {content: homeStartingContent});
-   console.log(posts);
+   res.render("home", {content: homeStartingContent, posts: posts});
 });
 
 app.get("/about", function(req, res){
@@ -38,6 +38,20 @@ app.post("/compose", function(req, res){
    };
    posts.push(post);
    res.redirect("/");
+});
+
+app.get("/posts/:postName", function(req, res){
+   let requestedTitle = _.lowerCase(req.params.postName);
+
+   posts.forEach(function(post){
+
+      let storedTitle = _.lowerCase(post.title);
+
+      if(storedTitle === requestedTitle){
+         res.render("post", {title: post.title, content: post.content});
+      }
+   });
+
 });
 
 
